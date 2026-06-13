@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const existingMessages = chat.messages as MentorMessage[];
+    const existingMessages = (chat.messages as any[]) as MentorMessage[];
 
     // Build messages for Groq
     const aiMessages = [
