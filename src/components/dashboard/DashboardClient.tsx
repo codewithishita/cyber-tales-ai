@@ -120,7 +120,7 @@ export function DashboardClient({ user, stats, achievements, recentActivity, wee
                 <Tooltip
                   contentStyle={{ background: "#1c1917", border: "1px solid #2a2927", borderRadius: 8, fontSize: 12 }}
                   labelStyle={{ color: "#f0f2f8" }}
-                  formatter={(v: number) => [`${v} XP`, ""]}
+                  formatter={(v: any) => [`${v} XP`, ""]}
                 />
                 <Bar dataKey="xp" radius={[4, 4, 0, 0]}>
                   {weeklyXp.map((_, i) => (
