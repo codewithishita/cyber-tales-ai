@@ -1,0 +1,217 @@
+// prisma/schema.prisma
+// Run: npx prisma generate && npx prisma db push
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  username  String?
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  xp               Int      @default(0)
+  level            Int      @default(1)
+  rank             Rank     @default(INTERNET_EXPLORER)
+  cyberSafetyScore Int      @default(0)
+  streakDays       Int      @default(0)
+  lastActivityAt   DateTime @default(now())
+
+  adventures   UserAdventure[]
+  challenges   UserChallenge[]
+  achievements UserAchievement[]
+  mentorChats  MentorChat[]
+  xpEvents     XpEvent[]
+
+  @@map("users")
+}
+
+enum Rank {
+  INTERNET_EXPLORER
+  CYBER_ROOKIE
+  SECURITY_SCOUT
+  THREAT_HUNTER
+  CYBER_GUARDIAN
+  CYBER_MASTER
+}
+
+model Adventure {
+  id         String         @id @default(cuid())
+  topic      AdventureTopic
+  difficulty Difficulty
+  ageGroup   AgeGroup
+  title      String
+  storyTree  Json
+  createdAt  DateTime       @default(now())
+
+  userAdventures UserAdventure[]
+
+  @@map("adventures")
+}
+
+model UserAdventure {
+  id          String           @id @default(cuid())
+  userId      String
+  adventureId String
+  status      AdventureStatus  @default(IN_PROGRESS)
+  choicePath  Json             @default("[]")
+  outcome     AdventureOutcome?
+  xpEarned    Int              @default(0)
+  startedAt   DateTime         @default(now())
+  completedAt DateTime?
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adventure Adventure @relation(fields: [adventureId], references: [id])
+
+  @@unique([userId, adventureId])
+  @@map("user_adventures")
+}
+
+enum AdventureTopic {
+  PHISHING
+  PASSWORD_SECURITY
+  ONLINE_PRIVACY
+  CYBERBULLYING
+  SCAM_DETECTION
+  SAFE_BROWSING
+  SOCIAL_ENGINEERING
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum AgeGroup {
+  AGE_8_10
+  AGE_11_13
+  AGE_14_15
+}
+
+enum AdventureStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+enum AdventureOutcome {
+  SAFE
+  PARTIAL
+  UNSAFE
+}
+
+model Challenge {
+  id          String        @id @default(cuid())
+  type        ChallengeType
+  difficulty  Difficulty
+  title       String
+  payload     Json
+  explanation String
+  xpReward    Int           @default(30)
+  createdAt   DateTime      @default(now())
+  isActive    Boolean       @default(true)
+
+  userChallenges UserChallenge[]
+
+  @@map("challenges")
+}
+
+model UserChallenge {
+  id          String    @id @default(cuid())
+  userId      String
+  challengeId String
+  answers     Json
+  score       Int
+  xpEarned    Int
+  completedAt DateTime  @default(now())
+  timeTaken   Int
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge Challenge @relation(fields: [challengeId], references: [id])
+
+  @@map("user_challenges")
+}
+
+enum ChallengeType {
+  PHISHING_EMAIL
+  URL_ANALYSIS
+  PASSWORD_STRENGTH
+  FAKE_SITE
+  SCAM_MESSAGE
+}
+
+model Achievement {
+  id          String @id @default(cuid())
+  slug        String @unique
+  name        String
+  description String
+  icon        String
+  xpReward    Int    @default(50)
+  condition   Json
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model MentorChat {
+  id        String   @id @default(cuid())
+  userId    String
+  messages  Json     @default("[]")
+  topic     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mentor_chats")
+}
+
+model XpEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int
+  source    XpSource
+  sourceId  String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("xp_events")
+}
+
+enum XpSource {
+  ADVENTURE_COMPLETE
+  ADVENTURE_PERFECT
+  CHALLENGE_COMPLETE
+  CHALLENGE_PERFECT
+  ACHIEVEMENT_UNLOCKED
+  STREAK_BONUS
+  MENTOR_SESSION
+}
