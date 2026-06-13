@@ -1,4 +1,3 @@
-// src/app/(auth)/sign-in/[[...sign-in]]/page.tsx
 import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
@@ -11,18 +10,7 @@ export default function SignInPage() {
           </div>
           <div style={{ color: "#78716c", fontSize: "14px" }}>Sign in to continue your cyber journey</div>
         </div>
-        <SignIn
-          appearance={{
-            variables: {
-              colorPrimary: "#111110",
-              colorBackground: "#ffffff",
-              borderRadius: "10px",
-              fontFamily: "'Geist', sans-serif",
-            },
-          }}
-          afterSignInUrl="/dashboard"
-          redirectUrl="/dashboard"
-        />
+        <SignIn />
       </div>
     </div>
   );

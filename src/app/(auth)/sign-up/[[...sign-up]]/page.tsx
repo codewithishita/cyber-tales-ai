@@ -1,4 +1,3 @@
-// src/app/(auth)/sign-up/[[...sign-up]]/page.tsx
 import { SignUp } from "@clerk/nextjs";
 
 export default function SignUpPage() {
@@ -11,16 +10,7 @@ export default function SignUpPage() {
           </div>
           <div style={{ color: "#78716c", fontSize: "14px" }}>Create your account and begin your first adventure</div>
         </div>
-        <SignUp
-          appearance={{
-            variables: {
-              colorPrimary: "#111110",
-              colorBackground: "#ffffff",
-              borderRadius: "10px",
-              fontFamily: "'Geist', sans-serif",
-            },
-          }}
-        />
+        <SignUp />
       </div>
     </div>
   );
