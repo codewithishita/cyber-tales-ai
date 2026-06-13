@@ -20,8 +20,6 @@ export default function SignUpPage() {
               fontFamily: "'Geist', sans-serif",
             },
           }}
-          afterSignUpUrl="/dashboard"
-          redirectUrl="/dashboard"
         />
       </div>
     </div>
