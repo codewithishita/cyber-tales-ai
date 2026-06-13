@@ -59,10 +59,10 @@ export async function POST(req: NextRequest) {
     const aiMessages = [
       { role: "system" as const, content: MENTOR_SYSTEM_PROMPT },
       ...existingMessages
-        .filter((m) => m.role !== "system")
+        .filter((m: any) => m.role !== "system")
         .slice(-20)
         .map((m) => ({
-          role: m.role as "user" | "assistant",
+          role: m.role as any,
           content: m.content,
         })),
       { role: "user" as const, content: message },
