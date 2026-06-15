@@ -1,8 +1,4 @@
 "use client";
-// src/components/LandingClient.tsx
-// Original premium landing page design preserved exactly.
-// Auth buttons ("Sign in", "Get started") are wired to Clerk routes via Next.js Link.
-
 import { useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -10,24 +6,10 @@ import { useRouter } from "next/navigation";
 export default function LandingClient() {
   const router = useRouter();
   const { isSignedIn } = useAuth();
-useEffect(() => {
+
+  useEffect(() => {
     // Inject CSS
     const style = document.createElement("style");
-    style.id = "landing-styles";
-    style.textContent = `...css...`;
-    document.head.appendChild(style);
-
-    // Wire nav buttons — AFTER style is defined
-    document.querySelector<HTMLElement>(".btn-ghost")?.addEventListener("click", () => router.push(isSignedIn ? "/dashboard" : "/sign-in"));
-    document.querySelector<HTMLElement>(".btn-primary.btn-large")?.addEventListener("click", () => router.push(isSignedIn ? "/dashboard" : "/sign-up"));
-
-    // Wire all CTA buttons
-    document.querySelectorAll<HTMLElement>("button, .btn-white").forEach(btn => {
-      const text = btn.textContent?.toLowerCase() ?? "";
-      if (text.includes("begin") || text.includes("quest") || text.includes("start")) {
-        btn.addEventListener("click", () => router.push(isSignedIn ? "/dashboard" : "/sign-up"));
-      }
-});
     style.id = "landing-styles";
     style.textContent = `
 /* ─── RESET & ROOT ─────────────────────────────────────────── */
@@ -954,7 +936,7 @@ footer {
       }, { threshold: 0.5 }).observe(xpEl);
     }
 
-    // Confetti
+    // Global functions
     (window as any).triggerConfetti = (originY?: number) => {
       const colors = ["#22c55e","#60a5fa","#fbbf24","#f87171","#a78bfa","#34d399"];
       for (let i = 0; i < 30; i++) {
@@ -980,8 +962,8 @@ footer {
       const fb = document.getElementById("result-feedback");
       if (!fb) return;
       const configs: Record<string, any> = {
-        safe: { bg:"rgba(34,197,94,.06)", border:"rgba(34,197,94,.2)", icon:"🏆", titleColor:"#15803d", title:"Mission success! +80 XP earned", msg:"You correctly identified the domain spoofing. <strong>roblox-security-team.net</strong> is not owned by Roblox.", xp:80 },
-        danger: { bg:"rgba(248,113,113,.05)", border:"rgba(248,113,113,.2)", icon:"💀", titleColor:"#dc2626", title:"Mission failed — you got phished.", msg:"The link led to a credential-harvesting page. Key red flags: <strong>.ru TLD</strong>, hyphenated domain, HTTP not HTTPS.", xp:0 },
+        safe: { bg:"rgba(34,197,94,.06)", border:"rgba(34,197,94,.2)", icon:"🏆", titleColor:"#15803d", title:"Mission success! +80 XP earned", msg:"You correctly identified the domain spoofing.", xp:80 },
+        danger: { bg:"rgba(248,113,113,.05)", border:"rgba(248,113,113,.2)", icon:"💀", titleColor:"#dc2626", title:"Mission failed — you got phished.", msg:"The link led to a credential-harvesting page.", xp:0 },
         ask: { bg:"rgba(251,191,36,.05)", border:"rgba(251,191,36,.2)", icon:"🤝", titleColor:"#b45309", title:"Smart instinct — +30 XP", msg:"Asking a trusted adult is always safe.", xp:30 }
       };
       const c = configs[type];
@@ -1034,10 +1016,13 @@ footer {
     };
   }, []);
 
+  const handleAuthClick = (dest: string) => {
+    window.location.href = isSignedIn ? "/dashboard" : dest;
+  };
+
   return (
-    <div
-      dangerouslySetInnerHTML={{
-        __html: `
+    <div>
+      <div dangerouslySetInnerHTML={{ __html: `
 
 <!-- NAV -->
 <nav>
@@ -1054,8 +1039,8 @@ footer {
   </ul>
   <div class="nav-actions">
     <div class="nav-streak">🔥 7</div>
-    <button class="btn btn-ghost" onclick="window.location.href='/sign-in'">Sign in</button>
-    <button class="btn-white" onclick="window.location.href='/sign-up'">Begin your quest →</button>
+    <button class="btn btn-ghost">Sign in</button>
+    <button class="btn btn-primary">Begin quest →</button>
   </div>
 </nav>
 
@@ -1888,7 +1873,7 @@ footer {
       <div class="cta-goal-chip">🏆 Scam Detective badge waiting</div>
     </div>
     <div class="cta-actions">
-      <button class="btn-white" onclick="triggerConfetti()">Begin your quest →</button>
+      <button class="btn-white" onclick="window.location.href='/sign-up'">Begin your quest →</button>
       <button class="btn-outline-white">View on GitHub</button>
     </div>
   </div>
@@ -1909,8 +1894,11 @@ footer {
   <div class="footer-copy">Built with Next.js · OpenAI · Supabase</div>
 </footer>
 
-`
-      }}
-    />
+` }} />
+      <style>{`
+        .auth-sign-in { cursor: pointer; }
+        .auth-sign-up { cursor: pointer; }
+      `}</style>
+    </div>
   );
 }
